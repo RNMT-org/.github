@@ -7,8 +7,8 @@ on:
 
 jobs:
   validate:
-    name: Validate on FOX runner
-    runs-on: [self-hosted, rnmt, fox]
+    name: Validate on RNMT global runner
+    runs-on: [self-hosted, rnmt, global]
     timeout-minutes: 30
     steps:
       - name: Checkout
