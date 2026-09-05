@@ -1,0 +1,37 @@
+name: RNMT Gitea mirror
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: [self-hosted, Linux, X64, rnmt, global]
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create or update private Gitea mirror
+        env:
+          GITEA_BASE_URL: ${{ secrets.RNMT_GITEA_BASE_URL }}
+          GITEA_OWNER: ${{ secrets.RNMT_GITEA_OWNER }}
+          GITEA_TOKEN: ${{ secrets.RNMT_GITEA_TOKEN }}
+          REPOSITORY: ${{ github.event.repository.name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$GITEA_BASE_URL" && test -n "$GITEA_OWNER" && test -n "$GITEA_TOKEN"
+          api="${GITEA_BASE_URL%/}/api/v1"
+          payload=$(printf '{"name":"%s","private":true,"auto_init":false}' "$REPOSITORY")
+          curl -fsS -X POST "$api/orgs/$GITEA_OWNER/repos" \
+            -H "Authorization: token $GITEA_TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d "$payload" || true
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git remote add gitea "${GITEA_BASE_URL%/}/$GITEA_OWNER/$REPOSITORY.git"
+          git -c http.extraheader="Authorization: token $GITEA_TOKEN" push --mirror gitea
