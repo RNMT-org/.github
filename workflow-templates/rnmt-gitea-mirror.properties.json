@@ -1,0 +1,1 @@
+{"name":"RNMT Gitea mirror","description":"Mirror the repository main branch to the company Gitea instance using the global runner","iconName":"icon-sync","categories":["Automation","Continuous integration"]}
