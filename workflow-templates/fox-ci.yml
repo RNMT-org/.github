@@ -1,0 +1,24 @@
+name: FOX CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate on FOX runner
+    runs-on: [self-hosted, rnmt, fox]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Runner context
+        run: |
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Runner: $RUNNER_NAME"
+          echo "Commit: $GITHUB_SHA"
+      - name: Project files
+        run: |
+          git status --short
+          test -f README.md && echo "README found" || true
