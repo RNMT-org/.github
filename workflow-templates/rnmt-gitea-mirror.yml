@@ -18,7 +18,7 @@ jobs:
 
       - name: Create or update private Gitea mirror
         env:
-          GITEA_BASE_URL: ${{ secrets.RNMT_GITEA_BASE_URL }}
+          GITEA_BASE_URL: https://gitea.rnmt.ir
           GITEA_OWNER: ${{ secrets.RNMT_GITEA_OWNER }}
           GITEA_TOKEN: ${{ secrets.RNMT_GITEA_TOKEN }}
           REPOSITORY: ${{ github.event.repository.name }}
